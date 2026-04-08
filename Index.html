@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compteur Tawba</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0a0a0f 0%, #0d1117 50%, #0a0f0a 100%);
+    font-family: Georgia, serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    color: #e8dcc8;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    opacity: 0.04;
+    pointer-events: none;
+    background-image:
+      repeating-linear-gradient(45deg, #c9a84c 0px, #c9a84c 1px, transparent 1px, transparent 40px),
+      repeating-linear-gradient(-45deg, #c9a84c 0px, #c9a84c 1px, transparent 1px, transparent 40px);
+  }
+
+  .container { width: 100%; max-width: 380px; }
+
+  .header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .header .bismillah { font-size: 28px; color: #c9a84c; letter-spacing: 4px; margin-bottom: 6px; }
+  .header .arabic { font-size: 22px; color: #e8dcc8; letter-spacing: 2px; margin-bottom: 4px; }
+  .header .subtitle { color: #445566; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; }
+
+  .card {
+    background: rgba(201,168,76,0.06);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 20px;
+    padding: 36px;
+    text-align: center;
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #c9a84c, transparent);
+  }
+
+  .label { color: #445566; font-size: 11px; letter-spacing: 3px; margin-bottom: 12px; text-transform: uppercase; }
+  .days {
+    font-size: 88px;
+    font-weight: bold;
+    color: #c9a84c;
+    line-height: 1;
+    margin-bottom: 8px;
+    text-shadow: 0 0 40px rgba(201,168,76,0.3);
+  }
+  .hm { color: #445566; font-size: 13px; letter-spacing: 2px; }
+
+  .stats {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .stat {
+    flex: 1;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 14px 8px;
+    text-align: center;
+  }
+  .stat-val { color: #c9a84c; font-size: 20px; font-weight: bold; }
+  .stat-label { color: #445566; font-size: 11px; margin-top: 3px; }
+
+  .progress-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+  }
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 12px;
+  }
+  .progress-header span:first-child { color: #889aaa; }
+  .progress-header span:last-child { color: #c9a84c; }
+  .progress-bar {
+    height: 5px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #c9a84c, #e8c96a);
+    border-radius: 10px;
+    transition: width 1s ease;
+  }
+
+  .milestones-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .milestones-title { color: #445566; font-size: 11px; letter-spacing: 2px; margin-bottom: 12px; text-transform: uppercase; }
+  .milestones-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .milestone-chip {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    transition: all 0.5s ease;
+  }
+  .milestone-chip.done {
+    background: rgba(201,168,76,0.15);
+    border: 1px solid rgba(201,168,76,0.4);
+    color: #c9a84c;
+  }
+  .milestone-chip.todo {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    color: #334455;
+  }
+
+  .dhikr {
+    text-align: center;
+    padding: 14px;
+    margin-bottom: 16px;
+    color: #6a7a6a;
+    font-size: 14px;
+    font-style: italic;
+    min-height: 44px;
+    transition: opacity 0.8s ease;
+  }
+
+  .date-info {
+    text-align: center;
+    margin-bottom: 14px;
+    color: #2a3a4a;
+    font-size: 11px;
+  }
+
+  .btn-relapse {
+    width: 100%;
+    background: rgba(255,80,80,0.06);
+    color: #884444;
+    border: 1px solid rgba(255,80,80,0.15);
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 14px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    font-family: Georgia, serif;
+    margin-bottom: 10px;
+  }
+  .btn-relapse:hover { background: rgba(255,80,80,0.1); }
+
+  .btn-start {
+    background: linear-gradient(135deg, #c9a84c, #a8833a);
+    color: #0a0a0f;
+    border: none;
+    border-radius: 12px;
+    padding: 16px 40px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 20px rgba(201,168,76,0.3);
+    font-family: Georgia, serif;
+  }
+  .btn-start:hover { opacity: 0.9; }
+
+  .note { text-align: center; color: #2a3a2a; font-size: 11px; line-height: 1.6; margin-bottom: 4px; }
+
+  .ayah {
+    margin-top: 28px;
+    text-align: center;
+    max-width: 320px;
+    color: #2a3a4a;
+    font-size: 12px;
+    line-height: 1.8;
+  }
+  .ayah .arabic-ayah { color: #334455; font-size: 15px; margin-bottom: 4px; }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,0.85);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal {
+    background: #0d1117;
+    border: 1px solid #333;
+    border-radius: 16px;
+    padding: 36px 32px;
+    text-align: center;
+    max-width: 320px;
+    width: 90%;
+  }
+  .modal-icon { font-size: 32px; margin-bottom: 16px; }
+  .modal-title { color: #e8dcc8; font-size: 17px; margin-bottom: 10px; font-weight: bold; }
+  .modal-text { color: #8899aa; font-size: 14px; line-height: 1.6; margin-bottom: 24px; }
+  .modal-btns { display: flex; gap: 12px; justify-content: center; }
+  .btn-cancel {
+    background: transparent; color: #c9a84c;
+    border: 1px solid #c9a84c; border-radius: 8px;
+    padding: 10px 20px; cursor: pointer; font-size: 14px;
+    font-family: Georgia, serif;
+  }
+  .btn-confirm {
+    background: #2a0a0a; color: #ff6666;
+    border: 1px solid #5a2020; border-radius: 8px;
+    padding: 10px 20px; cursor: pointer; font-size: 14px;
+    font-family: Georgia, serif;
+  }
+
+  /* Celebration */
+  .celebrate {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,0.85);
+    display: flex; align-items: center; justify-content: center;
+    animation: fadeIn 0.5s ease;
+  }
+  .celebrate-inner {
+    background: linear-gradient(135deg, #1a1500, #2a2000);
+    border: 2px solid #c9a84c;
+    border-radius: 20px;
+    padding: 48px 40px;
+    text-align: center;
+    max-width: 340px;
+    width: 90%;
+  }
+  .celebrate-icon { font-size: 60px; margin-bottom: 16px; }
+  .celebrate-title { color: #c9a84c; font-size: 22px; font-weight: bold; margin-bottom: 12px; }
+  .celebrate-msg { color: #e8dcc8; font-size: 15px; line-height: 1.6; margin-bottom: 28px; }
+  .celebrate-arabic { color: #8a9a8a; font-size: 18px; margin-bottom: 24px; }
+  .btn-celebrate {
+    background: #c9a84c; color: #0a0a0f;
+    border: none; border-radius: 10px;
+    padding: 12px 32px; font-size: 15px;
+    font-weight: bold; cursor: pointer;
+    font-family: Georgia, serif;
+  }
+
+  .start-screen { text-align: center; }
+  .start-big { color: #c9a84c; font-size: 36px; margin-bottom: 16px; }
+  .start-msg { color: #8899aa; font-size: 14px; margin-bottom: 32px; line-height: 1.7; }
+  .relapse-msg {
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 28px;
+    color: #8899aa;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="bismillah">﷽</div>
+    <div class="arabic">تَوْبَة نَصُوح</div>
+    <div class="subtitle">Compteur de Tawba</div>
+  </div>
+
+  <!-- START SCREEN -->
+  <div id="startScreen" class="start-screen hidden">
+    <div id="relapseMsg" class="relapse-msg hidden">
+      <div style="font-size:20px;margin-bottom:8px">🤍</div>
+      Fais ta tawba sincèrement. Allah pardonne tout. Puis reviens ici et recommence.
+    </div>
+    <div class="start-big">بسم الله</div>
+    <div class="start-msg" id="startMsg">Commence ton chemin aujourd'hui. Chaque jour comptera.</div>
+    <button class="btn-start" onclick="handleStart()">Commencer — الآن</button>
+  </div>
+
+  <!-- COUNTER SCREEN -->
+  <div id="counterScreen" class="hidden">
+    <div class="card">
+      <div class="label">Jours sans rechute</div>
+      <div class="days" id="daysCount">0</div>
+      <div class="hm" id="hmCount">0h 0min</div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-val" id="statHeures">0</div>
+        <div class="stat-label">Heures</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val" id="statPrieres">0</div>
+        <div class="stat-label">Prières</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val" id="statJours">0</div>
+        <div class="stat-label">Jours</div>
+      </div>
+    </div>
+
+    <div class="progress-card" id="progressCard">
+      <div class="progress-header">
+        <span id="progressLabel">Prochain palier</span>
+        <span id="progressRemaining"></span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="milestones-card">
+      <div class="milestones-title">Paliers</div>
+      <div class="milestones-grid" id="milestonesGrid"></div>
+    </div>
+
+    <div class="dhikr" id="dhikr"></div>
+
+    <div class="date-info" id="dateInfo"></div>
+
+    <button class="btn-relapse" onclick="showConfirm()">Déclarer une rechute</button>
+    <div class="note">La rechute n'efface pas le chemin. Tawba, puis recommence.</div>
+  </div>
+</div>
+
+<div class="ayah">
+  <div class="arabic-ayah">إِنَّ اللَّهَ يُحِبُّ التَّوَّابِينَ</div>
+  "Allah aime ceux qui se repentent sans cesse." — Baqara 2:222
+</div>
+
+<!-- Confirm Modal -->
+<div class="modal-overlay hidden" id="confirmModal">
+  <div class="modal">
+    <div class="modal-icon">🤍</div>
+    <div class="modal-title">Tu es sûr ?</div>
+    <div class="modal-text">Une rechute n'efface pas ton chemin. Fais ta tawba, puis recommence. Allah pardonne.</div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="hideConfirm()">Annuler</button>
+      <button class="btn-confirm" onclick="confirmRelapse()">Rechute</button>
+    </div>
+  </div>
+</div>
+
+<!-- Celebrate Modal -->
+<div class="celebrate hidden" id="celebrateModal">
+  <div class="celebrate-inner">
+    <div class="celebrate-icon" id="celebIcon"></div>
+    <div class="celebrate-title" id="celebTitle"></div>
+    <div class="celebrate-msg" id="celebMsg"></div>
+    <div class="celebrate-arabic">الحمد لله</div>
+    <button class="btn-celebrate" onclick="hideCelebrate()">Continuer — بسم الله</button>
+  </div>
+</div>
+
+<script>
+const MILESTONES = [
+  { days: 3,   icon: "🌱", label: "3 jours",  msg: "Tu as planté la graine. Continue." },
+  { days: 7,   icon: "⭐", label: "1 semaine", msg: "Une semaine. Le Prophète ﷺ aimait les actes réguliers." },
+  { days: 14,  icon: "🌙", label: "2 semaines",msg: "Deux semaines. Ton cerveau commence à changer." },
+  { days: 30,  icon: "☀️", label: "1 mois",    msg: "Un mois. MashaAllah — c'est une vraie victoire." },
+  { days: 40,  icon: "💎", label: "40 jours",  msg: "40 jours — le seuil de transformation selon les scholars." },
+  { days: 90,  icon: "🕌", label: "3 mois",    msg: "90 jours. Les circuits neuronaux sont reconstruits." },
+  { days: 180, icon: "🌟", label: "6 mois",    msg: "6 mois. Tu es un homme différent." },
+  { days: 365, icon: "🏆", label: "1 an",      msg: "Un an. SubhanAllah. Qu'Allah te préserve." },
+];
+
+const DHIKR = [
+  "أَسْتَغْفِرُ اللهَ — Astaghfirullah",
+  "تُبْ إِلَى اللهِ — Retourne-toi vers Allah",
+  "اللهُ مَعَكَ — Allah est avec toi",
+  "لَا تَقْنَطُوا مِنْ رَحْمَةِ اللهِ — Ne désespère pas de Sa miséricorde",
+  "إِنَّ اللهَ يُحِبُّ التَّوَّابِينَ — Allah aime ceux qui se repentent",
+];
+
+let dhikrIndex = 0;
+let tickInterval = null;
+let dhikrInterval = null;
+
+function save(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+function load(key) { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } }
+
+function handleStart() {
+  const now = Date.now();
+  save('tawba_start', now);
+  save('tawba_last_milestone', 0);
+  showCounter(now, 0);
+}
+
+function showStart(afterRelapse = false) {
+  document.getElementById('startScreen').classList.remove('hidden');
+  document.getElementById('counterScreen').classList.add('hidden');
+  if (afterRelapse) {
+    document.getElementById('relapseMsg').classList.remove('hidden');
+    document.getElementById('startMsg').textContent = "Quand tu es prêt, démarre un nouveau compteur.";
+  }
+  if (tickInterval) clearInterval(tickInterval);
+}
+
+function showCounter(startTs, lastMilestone) {
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('counterScreen').classList.remove('hidden');
+  buildMilestones(0);
+  tick(startTs, lastMilestone);
+  if (tickInterval) clearInterval(tickInterval);
+  tickInterval = setInterval(() => tick(startTs, load('tawba_last_milestone') || 0), 30000);
+}
+
+function tick(startTs, lastMilestone) {
+  const now = Date.now();
+  const diff = now - startTs;
+  const totalMin = Math.floor(diff / 60000);
+  const d = Math.floor(totalMin / 1440);
+  const h = Math.floor((totalMin % 1440) / 60);
+  const m = totalMin % 60;
+  const totalH = d * 24 + h;
+
+  document.getElementById('daysCount').textContent = d;
+  document.getElementById('hmCount').textContent = `${h}h ${m}min`;
+  document.getElementById('statHeures').textContent = totalH;
+  document.getElementById('statPrieres').textContent = (d * 24 + h) * 5;
+  document.getElementById('statJours').textContent = d;
+
+  // Date info
+  const startDate = new Date(startTs);
+  document.getElementById('dateInfo').textContent =
+    `Depuis le ${startDate.toLocaleDateString('fr-FR', {day:'numeric',month:'long',year:'numeric'})}`;
+
+  buildMilestones(d);
+  updateProgress(d);
+
+  // Check milestone
+  const current = [...MILESTONES].reverse().find(ms => ms.days <= d);
+  if (current && current.days !== lastMilestone) {
+    save('tawba_last_milestone', current.days);
+    showCelebrate(current);
+  }
+}
+
+function buildMilestones(days) {
+  const grid = document.getElementById('milestonesGrid');
+  grid.innerHTML = '';
+  MILESTONES.forEach(ms => {
+    const chip = document.createElement('div');
+    chip.className = `milestone-chip ${days >= ms.days ? 'done' : 'todo'}`;
+    chip.textContent = `${ms.icon} ${ms.label}`;
+    grid.appendChild(chip);
+  });
+}
+
+function updateProgress(days) {
+  const next = MILESTONES.find(ms => ms.days > days);
+  if (!next) {
+    document.getElementById('progressCard').style.display = 'none';
+    return;
+  }
+  document.getElementById('progressCard').style.display = '';
+  document.getElementById('progressLabel').textContent = `${next.icon} ${next.label}`;
+  document.getElementById('progressRemaining').textContent = `${next.days - days}j restants`;
+  const pct = Math.min((days / next.days) * 100, 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function showCelebrate(ms) {
+  document.getElementById('celebIcon').textContent = ms.icon;
+  document.getElementById('celebTitle').textContent = `${ms.label} accomplis`;
+  document.getElementById('celebMsg').textContent = ms.msg;
+  document.getElementById('celebrateModal').classList.remove('hidden');
+}
+function hideCelebrate() {
+  document.getElementById('celebrateModal').classList.add('hidden');
+}
+
+function showConfirm() { document.getElementById('confirmModal').classList.remove('hidden'); }
+function hideConfirm() { document.getElementById('confirmModal').classList.add('hidden'); }
+
+function confirmRelapse() {
+  hideConfirm();
+  localStorage.removeItem('tawba_start');
+  localStorage.removeItem('tawba_last_milestone');
+  if (tickInterval) clearInterval(tickInterval);
+  showStart(true);
+}
+
+function rotateDhikr() {
+  const el = document.getElementById('dhikr');
+  el.style.opacity = '0';
+  setTimeout(() => {
+    dhikrIndex = (dhikrIndex + 1) % DHIKR.length;
+    el.textContent = DHIKR[dhikrIndex];
+    el.style.opacity = '1';
+  }, 400);
+}
+
+// Init
+window.addEventListener('load', () => {
+  const startTs = load('tawba_start');
+  const lastMilestone = load('tawba_last_milestone') || 0;
+
+  document.getElementById('dhikr').textContent = DHIKR[0];
+  dhikrInterval = setInterval(rotateDhikr, 4000);
+
+  if (startTs) {
+    showCounter(startTs, lastMilestone);
+  } else {
+    showStart(false);
+  }
+});
+</script>
+</body>
+</html>
