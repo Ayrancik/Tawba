@@ -2,349 +2,485 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Compteur Tawba</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>تَوْبَة نَصُوح</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:wght@300;400&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --gold: #c9a84c;
+  --gold-light: #f0d080;
+  --gold-dim: #7a5e20;
+  --bg: #06080a;
+  --bg2: #0d1117;
+  --bg3: #111820;
+  --text: #e8dcc8;
+  --dim: #445566;
+  --green: #2ecc71;
+}
 
-  body {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #0a0a0f 0%, #0d1117 50%, #0a0f0a 100%);
-    font-family: Georgia, serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 24px 16px;
-    color: #e8dcc8;
-  }
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    opacity: 0.04;
-    pointer-events: none;
-    background-image:
-      repeating-linear-gradient(45deg, #c9a84c 0px, #c9a84c 1px, transparent 1px, transparent 40px),
-      repeating-linear-gradient(-45deg, #c9a84c 0px, #c9a84c 1px, transparent 1px, transparent 40px);
-  }
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  font-family: 'Lato', sans-serif;
+  color: var(--text);
+  overflow-x: hidden;
+}
 
-  .container { width: 100%; max-width: 380px; }
+/* STARS BG */
+#stars {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(201,168,76,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, rgba(46,204,113,0.03) 0%, transparent 60%);
+}
+.star {
+  position: absolute;
+  width: 2px; height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle var(--dur) ease-in-out infinite;
+  opacity: 0;
+}
+@keyframes twinkle {
+  0%,100% { opacity:0; transform:scale(1); }
+  50% { opacity:var(--op); transform:scale(1.5); }
+}
 
-  .header {
-    text-align: center;
-    margin-bottom: 28px;
-  }
-  .header .bismillah { font-size: 28px; color: #c9a84c; letter-spacing: 4px; margin-bottom: 6px; }
-  .header .arabic { font-size: 22px; color: #e8dcc8; letter-spacing: 2px; margin-bottom: 4px; }
-  .header .subtitle { color: #445566; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; }
+/* MAIN WRAP */
+.wrap {
+  position: relative; z-index: 1;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 32px 18px 60px;
+}
 
-  .card {
-    background: rgba(201,168,76,0.06);
-    border: 1px solid rgba(201,168,76,0.25);
-    border-radius: 20px;
-    padding: 36px;
-    text-align: center;
-    margin-bottom: 14px;
-    position: relative;
-    overflow: hidden;
-  }
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #c9a84c, transparent);
-  }
+/* HEADER */
+.header { text-align: center; margin-bottom: 28px; }
+.bismillah {
+  font-size: 32px; color: var(--gold);
+  filter: drop-shadow(0 0 12px rgba(201,168,76,0.5));
+  margin-bottom: 10px;
+  animation: pulseGold 3s ease-in-out infinite;
+}
+@keyframes pulseGold {
+  0%,100% { filter: drop-shadow(0 0 8px rgba(201,168,76,0.4)); }
+  50% { filter: drop-shadow(0 0 20px rgba(201,168,76,0.8)); }
+}
+.title-ar {
+  font-size: 24px; color: var(--text);
+  letter-spacing: 2px; margin-bottom: 4px;
+}
+.title-sub {
+  font-family: 'Cinzel', serif;
+  font-size: 10px; color: var(--dim);
+  letter-spacing: 5px; text-transform: uppercase;
+}
 
-  .label { color: #445566; font-size: 11px; letter-spacing: 3px; margin-bottom: 12px; text-transform: uppercase; }
-  .days {
-    font-size: 88px;
-    font-weight: bold;
-    color: #c9a84c;
-    line-height: 1;
-    margin-bottom: 8px;
-    text-shadow: 0 0 40px rgba(201,168,76,0.3);
-  }
-  .hm { color: #445566; font-size: 13px; letter-spacing: 2px; }
+/* RANK BADGE */
+.rank-badge {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, rgba(201,168,76,0.1), rgba(201,168,76,0.05));
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 40px;
+  padding: 10px 24px;
+  margin-bottom: 24px;
+  animation: fadeSlideIn 0.6s ease;
+}
+.rank-icon { font-size: 22px; }
+.rank-name {
+  font-family: 'Cinzel', serif;
+  font-size: 13px; color: var(--gold);
+  letter-spacing: 2px;
+}
+.rank-level {
+  font-size: 11px; color: var(--dim);
+  margin-top: 2px;
+}
 
-  .stats {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-  .stat {
-    flex: 1;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 12px;
-    padding: 14px 8px;
-    text-align: center;
-  }
-  .stat-val { color: #c9a84c; font-size: 20px; font-weight: bold; }
-  .stat-label { color: #445566; font-size: 11px; margin-top: 3px; }
+/* MAIN COUNTER */
+.counter-card {
+  position: relative;
+  background: linear-gradient(145deg, #0f1520, #080d12);
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: 24px;
+  padding: 36px 24px 28px;
+  text-align: center;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.counter-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.counter-card::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.counter-label {
+  font-family: 'Cinzel', serif;
+  font-size: 10px; color: var(--dim);
+  letter-spacing: 4px; margin-bottom: 16px;
+  text-transform: uppercase;
+}
+.days-num {
+  font-family: 'Cinzel', serif;
+  font-size: 96px; font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+  text-shadow: 0 0 60px rgba(201,168,76,0.4), 0 0 120px rgba(201,168,76,0.15);
+  transition: all 0.5s ease;
+}
+.days-num.bump {
+  animation: bump 0.4s ease;
+}
+@keyframes bump {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+.time-detail {
+  font-size: 13px; color: var(--dim);
+  letter-spacing: 3px; margin-top: 10px;
+}
+.start-date {
+  font-size: 11px; color: #2a3a4a;
+  margin-top: 8px;
+}
 
-  .progress-card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 14px;
-    padding: 18px 20px;
-    margin-bottom: 14px;
-  }
-  .progress-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    font-size: 12px;
-  }
-  .progress-header span:first-child { color: #889aaa; }
-  .progress-header span:last-child { color: #c9a84c; }
-  .progress-bar {
-    height: 5px;
-    background: rgba(255,255,255,0.07);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #c9a84c, #e8c96a);
-    border-radius: 10px;
-    transition: width 1s ease;
-  }
+/* XP BAR */
+.xp-section {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+.xp-header {
+  display: flex; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.xp-next { font-size: 12px; color: #889aaa; }
+.xp-days-left { font-size: 12px; color: var(--gold); }
+.xp-bar-bg {
+  height: 8px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 10px; overflow: hidden;
+}
+.xp-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-light));
+  border-radius: 10px;
+  transition: width 1.5s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+  overflow: hidden;
+}
+.xp-bar-fill::after {
+  content: '';
+  position: absolute; top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shimmer 2s infinite;
+}
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
 
-  .milestones-card {
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 14px;
-    padding: 16px;
-    margin-bottom: 14px;
-  }
-  .milestones-title { color: #445566; font-size: 11px; letter-spacing: 2px; margin-bottom: 12px; text-transform: uppercase; }
-  .milestones-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-  .milestone-chip {
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 12px;
-    transition: all 0.5s ease;
-  }
-  .milestone-chip.done {
-    background: rgba(201,168,76,0.15);
-    border: 1px solid rgba(201,168,76,0.4);
-    color: #c9a84c;
-  }
-  .milestone-chip.todo {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.06);
-    color: #334455;
-  }
+/* REWARDS GRID */
+.rewards-title {
+  font-family: 'Cinzel', serif;
+  font-size: 11px; color: var(--dim);
+  letter-spacing: 4px; text-transform: uppercase;
+  margin-bottom: 12px; text-align: center;
+}
+.rewards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.reward-card {
+  position: relative;
+  background: rgba(255,255,255,0.02);
+  border-radius: 16px;
+  padding: 16px 12px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: all 0.4s ease;
+  overflow: hidden;
+}
+.reward-card.unlocked {
+  background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(201,168,76,0.05));
+  border-color: rgba(201,168,76,0.35);
+  box-shadow: 0 0 20px rgba(201,168,76,0.1);
+}
+.reward-card.locked {
+  opacity: 0.4;
+  filter: grayscale(0.8);
+}
+.reward-card.just-unlocked {
+  animation: unlockPop 0.8s ease;
+}
+@keyframes unlockPop {
+  0% { transform: scale(0.9); box-shadow: 0 0 0px rgba(201,168,76,0); }
+  50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(201,168,76,0.5); }
+  100% { transform: scale(1); box-shadow: 0 0 20px rgba(201,168,76,0.15); }
+}
+.reward-emoji { font-size: 28px; margin-bottom: 6px; display: block; }
+.reward-days {
+  font-family: 'Cinzel', serif;
+  font-size: 10px; color: var(--gold);
+  letter-spacing: 2px; margin-bottom: 4px;
+}
+.reward-name {
+  font-size: 12px; color: var(--text);
+  line-height: 1.3;
+}
+.reward-locked-icon {
+  position: absolute; top: 8px; right: 8px;
+  font-size: 10px; opacity: 0.4;
+}
+.reward-check {
+  position: absolute; top: 8px; right: 8px;
+  color: var(--gold); font-size: 12px;
+}
 
-  .dhikr {
-    text-align: center;
-    padding: 14px;
-    margin-bottom: 16px;
-    color: #6a7a6a;
-    font-size: 14px;
-    font-style: italic;
-    min-height: 44px;
-    transition: opacity 0.8s ease;
-  }
+/* DHIKR */
+.dhikr-box {
+  text-align: center;
+  padding: 18px;
+  margin-bottom: 16px;
+  min-height: 52px;
+  display: flex; align-items: center; justify-content: center;
+}
+.dhikr-text {
+  color: #5a7a5a;
+  font-size: 14px;
+  font-style: italic;
+  transition: opacity 0.8s ease;
+  line-height: 1.5;
+}
 
-  .date-info {
-    text-align: center;
-    margin-bottom: 14px;
-    color: #2a3a4a;
-    font-size: 11px;
-  }
+/* BUTTONS */
+.btn-start {
+  width: 100%;
+  background: linear-gradient(135deg, var(--gold), #a8833a);
+  color: #06080a;
+  border: none; border-radius: 14px;
+  padding: 18px;
+  font-family: 'Cinzel', serif;
+  font-size: 15px; font-weight: 600;
+  cursor: pointer; letter-spacing: 2px;
+  box-shadow: 0 4px 30px rgba(201,168,76,0.35);
+  transition: all 0.3s ease;
+  margin-bottom: 12px;
+}
+.btn-start:active { transform: scale(0.97); }
 
-  .btn-relapse {
-    width: 100%;
-    background: rgba(255,80,80,0.06);
-    color: #884444;
-    border: 1px solid rgba(255,80,80,0.15);
-    border-radius: 12px;
-    padding: 14px;
-    font-size: 14px;
-    cursor: pointer;
-    letter-spacing: 1px;
-    font-family: Georgia, serif;
-    margin-bottom: 10px;
-  }
-  .btn-relapse:hover { background: rgba(255,80,80,0.1); }
+.btn-relapse {
+  width: 100%;
+  background: rgba(180,40,40,0.08);
+  color: #7a3333;
+  border: 1px solid rgba(180,40,40,0.2);
+  border-radius: 14px;
+  padding: 14px;
+  font-size: 13px; cursor: pointer;
+  letter-spacing: 1px;
+  font-family: 'Lato', sans-serif;
+  transition: all 0.3s ease;
+}
+.btn-relapse:active { background: rgba(180,40,40,0.15); }
 
-  .btn-start {
-    background: linear-gradient(135deg, #c9a84c, #a8833a);
-    color: #0a0a0f;
-    border: none;
-    border-radius: 12px;
-    padding: 16px 40px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    letter-spacing: 1px;
-    box-shadow: 0 4px 20px rgba(201,168,76,0.3);
-    font-family: Georgia, serif;
-  }
-  .btn-start:hover { opacity: 0.9; }
+.ayah {
+  text-align: center; margin-top: 32px;
+  color: #1e2e1e; font-size: 12px; line-height: 1.9;
+}
+.ayah-ar { color: #2a3a2a; font-size: 15px; margin-bottom: 4px; }
 
-  .note { text-align: center; color: #2a3a2a; font-size: 11px; line-height: 1.6; margin-bottom: 4px; }
+/* START SCREEN */
+.start-screen { text-align: center; padding: 20px 0; }
+.start-big { font-size: 40px; color: var(--gold); margin-bottom: 20px; }
+.start-msg { color: #667788; font-size: 14px; line-height: 1.8; margin-bottom: 32px; }
+.relapse-note {
+  background: rgba(255,255,255,0.03);
+  border-radius: 12px; padding: 16px;
+  margin-bottom: 28px;
+  color: #667788; font-size: 13px; line-height: 1.7;
+}
 
-  .ayah {
-    margin-top: 28px;
-    text-align: center;
-    max-width: 320px;
-    color: #2a3a4a;
-    font-size: 12px;
-    line-height: 1.8;
-  }
-  .ayah .arabic-ayah { color: #334455; font-size: 15px; margin-bottom: 4px; }
+/* MODAL */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.9);
+  display: flex; align-items: center; justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+.modal {
+  background: linear-gradient(145deg, #0d1520, #080d12);
+  border: 1px solid #2a3a4a;
+  border-radius: 20px;
+  padding: 36px 28px;
+  text-align: center;
+  max-width: 320px; width: 90%;
+  animation: slideUp 0.3s ease;
+}
+.modal-icon { font-size: 40px; margin-bottom: 16px; }
+.modal-title { font-family: 'Cinzel', serif; font-size: 18px; color: var(--text); margin-bottom: 10px; }
+.modal-text { color: #667788; font-size: 13px; line-height: 1.7; margin-bottom: 24px; }
+.modal-btns { display: flex; gap: 10px; justify-content: center; }
+.btn-cancel {
+  background: transparent; color: var(--gold);
+  border: 1px solid var(--gold-dim); border-radius: 10px;
+  padding: 11px 22px; cursor: pointer; font-size: 13px;
+  font-family: 'Lato', sans-serif;
+}
+.btn-confirm {
+  background: rgba(180,40,40,0.15); color: #ff7777;
+  border: 1px solid rgba(180,40,40,0.3); border-radius: 10px;
+  padding: 11px 22px; cursor: pointer; font-size: 13px;
+  font-family: 'Lato', sans-serif;
+}
 
-  /* Modal */
-  .modal-overlay {
-    position: fixed; inset: 0; z-index: 100;
-    background: rgba(0,0,0,0.85);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .modal {
-    background: #0d1117;
-    border: 1px solid #333;
-    border-radius: 16px;
-    padding: 36px 32px;
-    text-align: center;
-    max-width: 320px;
-    width: 90%;
-  }
-  .modal-icon { font-size: 32px; margin-bottom: 16px; }
-  .modal-title { color: #e8dcc8; font-size: 17px; margin-bottom: 10px; font-weight: bold; }
-  .modal-text { color: #8899aa; font-size: 14px; line-height: 1.6; margin-bottom: 24px; }
-  .modal-btns { display: flex; gap: 12px; justify-content: center; }
-  .btn-cancel {
-    background: transparent; color: #c9a84c;
-    border: 1px solid #c9a84c; border-radius: 8px;
-    padding: 10px 20px; cursor: pointer; font-size: 14px;
-    font-family: Georgia, serif;
-  }
-  .btn-confirm {
-    background: #2a0a0a; color: #ff6666;
-    border: 1px solid #5a2020; border-radius: 8px;
-    padding: 10px 20px; cursor: pointer; font-size: 14px;
-    font-family: Georgia, serif;
-  }
+/* CELEBRATE */
+.celebrate-overlay {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(0,0,0,0.92);
+  display: flex; align-items: center; justify-content: center;
+  animation: fadeIn 0.4s ease;
+}
+.celebrate-box {
+  background: linear-gradient(145deg, #1a1500, #0f1000);
+  border: 2px solid var(--gold);
+  border-radius: 24px;
+  padding: 48px 36px;
+  text-align: center;
+  max-width: 340px; width: 90%;
+  position: relative;
+  overflow: hidden;
+  animation: celebrateIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes celebrateIn {
+  0% { transform: scale(0.5) rotate(-5deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.celebrate-box::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.15) 0%, transparent 70%);
+}
+.celeb-emoji { font-size: 64px; margin-bottom: 12px; display: block; filter: drop-shadow(0 0 20px rgba(201,168,76,0.5)); }
+.celeb-days { font-family: 'Cinzel', serif; font-size: 13px; color: var(--gold); letter-spacing: 3px; margin-bottom: 8px; }
+.celeb-title { font-family: 'Cinzel', serif; font-size: 20px; color: var(--text); margin-bottom: 12px; }
+.celeb-reward {
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 12px; padding: 14px;
+  margin-bottom: 16px;
+}
+.celeb-reward-label { font-size: 11px; color: var(--dim); letter-spacing: 2px; margin-bottom: 6px; }
+.celeb-reward-name { font-size: 15px; color: var(--gold); font-weight: bold; }
+.celeb-msg { color: #889988; font-size: 13px; line-height: 1.7; margin-bottom: 8px; }
+.celeb-arabic { color: #556655; font-size: 16px; margin-bottom: 24px; }
+.btn-celeb {
+  background: linear-gradient(135deg, var(--gold), #a8833a);
+  color: #06080a; border: none; border-radius: 12px;
+  padding: 13px 36px; font-family: 'Cinzel', serif;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(201,168,76,0.4);
+}
 
-  /* Celebration */
-  .celebrate {
-    position: fixed; inset: 0; z-index: 100;
-    background: rgba(0,0,0,0.85);
-    display: flex; align-items: center; justify-content: center;
-    animation: fadeIn 0.5s ease;
-  }
-  .celebrate-inner {
-    background: linear-gradient(135deg, #1a1500, #2a2000);
-    border: 2px solid #c9a84c;
-    border-radius: 20px;
-    padding: 48px 40px;
-    text-align: center;
-    max-width: 340px;
-    width: 90%;
-  }
-  .celebrate-icon { font-size: 60px; margin-bottom: 16px; }
-  .celebrate-title { color: #c9a84c; font-size: 22px; font-weight: bold; margin-bottom: 12px; }
-  .celebrate-msg { color: #e8dcc8; font-size: 15px; line-height: 1.6; margin-bottom: 28px; }
-  .celebrate-arabic { color: #8a9a8a; font-size: 18px; margin-bottom: 24px; }
-  .btn-celebrate {
-    background: #c9a84c; color: #0a0a0f;
-    border: none; border-radius: 10px;
-    padding: 12px 32px; font-size: 15px;
-    font-weight: bold; cursor: pointer;
-    font-family: Georgia, serif;
-  }
+/* PARTICLES */
+.particle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 400;
+  border-radius: 50%;
+  animation: particleFly var(--dur) ease-out forwards;
+}
+@keyframes particleFly {
+  0% { transform: translate(0,0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
 
-  .start-screen { text-align: center; }
-  .start-big { color: #c9a84c; font-size: 36px; margin-bottom: 16px; }
-  .start-msg { color: #8899aa; font-size: 14px; margin-bottom: 32px; line-height: 1.7; }
-  .relapse-msg {
-    background: rgba(255,255,255,0.04);
-    border-radius: 10px;
-    padding: 16px;
-    margin-bottom: 28px;
-    color: #8899aa;
-    font-size: 14px;
-    line-height: 1.6;
-  }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes fadeSlideIn { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-  @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
-  .hidden { display: none; }
+.hidden { display: none !important; }
 </style>
 </head>
 <body>
 
-<div class="container">
+<div id="stars"></div>
+
+<div class="wrap">
   <div class="header">
     <div class="bismillah">﷽</div>
-    <div class="arabic">تَوْبَة نَصُوح</div>
-    <div class="subtitle">Compteur de Tawba</div>
+    <div class="title-ar">تَوْبَة نَصُوح</div>
+    <div class="title-sub">Compteur de Tawba</div>
   </div>
 
   <!-- START SCREEN -->
-  <div id="startScreen" class="start-screen hidden">
-    <div id="relapseMsg" class="relapse-msg hidden">
-      <div style="font-size:20px;margin-bottom:8px">🤍</div>
-      Fais ta tawba sincèrement. Allah pardonne tout. Puis reviens ici et recommence.
+  <div id="startScreen">
+    <div id="relapseNote" class="relapse-note hidden">
+      <div style="font-size:24px;margin-bottom:8px">🤍</div>
+      Fais ta tawba sincèrement. Allah pardonne tout. Quand tu es prêt, recommence.
     </div>
-    <div class="start-big">بسم الله</div>
-    <div class="start-msg" id="startMsg">Commence ton chemin aujourd'hui. Chaque jour comptera.</div>
-    <button class="btn-start" onclick="handleStart()">Commencer — الآن</button>
+    <div class="start-screen">
+      <div class="start-big">بسم الله</div>
+      <div class="start-msg" id="startMsg">Commence ton chemin aujourd'hui.<br>Chaque jour est une victoire.</div>
+      <button class="btn-start" onclick="handleStart()">Commencer — الآن</button>
+    </div>
   </div>
 
   <!-- COUNTER SCREEN -->
   <div id="counterScreen" class="hidden">
-    <div class="card">
-      <div class="label">Jours sans rechute</div>
-      <div class="days" id="daysCount">0</div>
-      <div class="hm" id="hmCount">0h 0min</div>
-    </div>
 
-    <div class="stats">
-      <div class="stat">
-        <div class="stat-val" id="statHeures">0</div>
-        <div class="stat-label">Heures</div>
-      </div>
-      <div class="stat">
-        <div class="stat-val" id="statPrieres">0</div>
-        <div class="stat-label">Prières</div>
-      </div>
-      <div class="stat">
-        <div class="stat-val" id="statJours">0</div>
-        <div class="stat-label">Jours</div>
+    <div class="rank-badge">
+      <div class="rank-icon" id="rankIcon">🌱</div>
+      <div>
+        <div class="rank-name" id="rankName">NOVICE</div>
+        <div class="rank-level" id="rankLevel">Niveau 1</div>
       </div>
     </div>
 
-    <div class="progress-card" id="progressCard">
-      <div class="progress-header">
-        <span id="progressLabel">Prochain palier</span>
-        <span id="progressRemaining"></span>
+    <div class="counter-card">
+      <div class="counter-label">Jours sans rechute</div>
+      <div class="days-num" id="daysNum">0</div>
+      <div class="time-detail" id="timeDetail">0h 0min</div>
+      <div class="start-date" id="startDateTxt"></div>
+    </div>
+
+    <div class="xp-section">
+      <div class="xp-header">
+        <span class="xp-next" id="xpNext">🌱 3 jours</span>
+        <span class="xp-days-left" id="xpLeft">3j restants</span>
       </div>
-      <div class="progress-bar">
-        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      <div class="xp-bar-bg">
+        <div class="xp-bar-fill" id="xpFill" style="width:0%"></div>
       </div>
     </div>
 
-    <div class="milestones-card">
-      <div class="milestones-title">Paliers</div>
-      <div class="milestones-grid" id="milestonesGrid"></div>
+    <div class="rewards-title">Récompenses</div>
+    <div class="rewards-grid" id="rewardsGrid"></div>
+
+    <div class="dhikr-box">
+      <div class="dhikr-text" id="dhikrText"></div>
     </div>
-
-    <div class="dhikr" id="dhikr"></div>
-
-    <div class="date-info" id="dateInfo"></div>
 
     <button class="btn-relapse" onclick="showConfirm()">Déclarer une rechute</button>
-    <div class="note">La rechute n'efface pas le chemin. Tawba, puis recommence.</div>
+
   </div>
 </div>
 
 <div class="ayah">
-  <div class="arabic-ayah">إِنَّ اللَّهَ يُحِبُّ التَّوَّابِينَ</div>
+  <div class="ayah-ar">إِنَّ اللَّهَ يُحِبُّ التَّوَّابِينَ</div>
   "Allah aime ceux qui se repentent sans cesse." — Baqara 2:222
 </div>
 
@@ -353,7 +489,7 @@
   <div class="modal">
     <div class="modal-icon">🤍</div>
     <div class="modal-title">Tu es sûr ?</div>
-    <div class="modal-text">Une rechute n'efface pas ton chemin. Fais ta tawba, puis recommence. Allah pardonne.</div>
+    <div class="modal-text">Une rechute n'efface pas ton chemin. Fais ta tawba, puis recommence. Allah pardonne toujours.</div>
     <div class="modal-btns">
       <button class="btn-cancel" onclick="hideConfirm()">Annuler</button>
       <button class="btn-confirm" onclick="confirmRelapse()">Rechute</button>
@@ -362,169 +498,266 @@
 </div>
 
 <!-- Celebrate Modal -->
-<div class="celebrate hidden" id="celebrateModal">
-  <div class="celebrate-inner">
-    <div class="celebrate-icon" id="celebIcon"></div>
-    <div class="celebrate-title" id="celebTitle"></div>
-    <div class="celebrate-msg" id="celebMsg"></div>
-    <div class="celebrate-arabic">الحمد لله</div>
-    <button class="btn-celebrate" onclick="hideCelebrate()">Continuer — بسم الله</button>
+<div class="celebrate-overlay hidden" id="celebModal">
+  <div class="celebrate-box">
+    <span class="celeb-emoji" id="celebEmoji"></span>
+    <div class="celeb-days" id="celebDays"></div>
+    <div class="celeb-title" id="celebTitle"></div>
+    <div class="celeb-reward">
+      <div class="celeb-reward-label">RÉCOMPENSE DÉBLOQUÉE</div>
+      <div class="celeb-reward-name" id="celebReward"></div>
+    </div>
+    <div class="celeb-msg" id="celebMsg"></div>
+    <div class="celeb-arabic">الحمد لله</div>
+    <button class="btn-celeb" onclick="hideCelebrate()">Continuer — بسم الله</button>
   </div>
 </div>
 
 <script>
-const MILESTONES = [
-  { days: 3,   icon: "🌱", label: "3 jours",  msg: "Tu as planté la graine. Continue." },
-  { days: 7,   icon: "⭐", label: "1 semaine", msg: "Une semaine. Le Prophète ﷺ aimait les actes réguliers." },
-  { days: 14,  icon: "🌙", label: "2 semaines",msg: "Deux semaines. Ton cerveau commence à changer." },
-  { days: 30,  icon: "☀️", label: "1 mois",    msg: "Un mois. MashaAllah — c'est une vraie victoire." },
-  { days: 40,  icon: "💎", label: "40 jours",  msg: "40 jours — le seuil de transformation selon les scholars." },
-  { days: 90,  icon: "🕌", label: "3 mois",    msg: "90 jours. Les circuits neuronaux sont reconstruits." },
-  { days: 180, icon: "🌟", label: "6 mois",    msg: "6 mois. Tu es un homme différent." },
-  { days: 365, icon: "🏆", label: "1 an",      msg: "Un an. SubhanAllah. Qu'Allah te préserve." },
+// ============ DATA ============
+const REWARDS = [
+  { days: 3,   emoji: "🌱", name: "La Graine",     title: "3 Jours",    reward: "🍔 Commande le repas que tu veux", msg: "Tu as planté la graine. Continue, frère." },
+  { days: 7,   emoji: "⭐", name: "L'Étoile",      title: "1 Semaine",  reward: "💈 Séance barbier premium", msg: "Le Prophète ﷺ aimait les actes réguliers." },
+  { days: 14,  emoji: "🌙", name: "Le Croissant",  title: "2 Semaines", reward: "👟 Achète une pièce de vêtement", msg: "Ton cerveau commence à se reconstruire." },
+  { days: 21,  emoji: "💧", name: "La Pluie",      title: "3 Semaines", reward: "🎮 Journée gaming sans culpabilité", msg: "21 jours — un nouveau circuit neuronal." },
+  { days: 30,  emoji: "☀️", name: "Le Soleil",     title: "1 Mois",     reward: "🍽️ Resto avec des amis ou en famille", msg: "MashaAllah — un mois entier. Réelle victoire." },
+  { days: 40,  emoji: "💎", name: "Le Diamant",    title: "40 Jours",   reward: "👞 Achète les chaussures que tu veux", msg: "40 jours — seuil de transformation chez les scholars." },
+  { days: 60,  emoji: "🦅", name: "L'Aigle",       title: "2 Mois",     reward: "🛍️ Shopping — budget libre", msg: "Tu surpasses 95% des gens qui essaient." },
+  { days: 90,  emoji: "🕌", name: "Le Pèlerin",    title: "3 Mois",     reward: "✈️ Week-end voyage où tu veux", msg: "90 jours. SubhanAllah. Les circuits sont reconstruits." },
+  { days: 180, emoji: "🌟", name: "L'Élu",         title: "6 Mois",     reward: "📱 Nouveau téléphone ou gadget", msg: "6 mois. Tu es littéralement un homme différent." },
+  { days: 365, emoji: "🏆", name: "Le Victorieux", title: "1 An",       reward: "🕋 Planifie ta Omra — tu le mérites", msg: "Un an. Qu'Allah te préserve et te guide toujours." },
+];
+
+const RANKS = [
+  { min: 0,   emoji: "🌱", name: "NOVICE",      level: "Niveau 1" },
+  { min: 3,   emoji: "⭐", name: "CHERCHEUR",   level: "Niveau 2" },
+  { min: 7,   emoji: "🌙", name: "CROYANT",     level: "Niveau 3" },
+  { min: 21,  emoji: "💧", name: "PATIENT",     level: "Niveau 4" },
+  { min: 40,  emoji: "💎", name: "FORT",        level: "Niveau 5" },
+  { min: 90,  emoji: "🦅", name: "PÈLERIN",     level: "Niveau 6" },
+  { min: 180, emoji: "🌟", name: "ÉLU",         level: "Niveau 7" },
+  { min: 365, emoji: "🏆", name: "VICTORIEUX",  level: "Niveau MAX" },
 ];
 
 const DHIKR = [
   "أَسْتَغْفِرُ اللهَ — Astaghfirullah",
   "تُبْ إِلَى اللهِ — Retourne-toi vers Allah",
   "اللهُ مَعَكَ — Allah est avec toi",
-  "لَا تَقْنَطُوا مِنْ رَحْمَةِ اللهِ — Ne désespère pas de Sa miséricorde",
-  "إِنَّ اللهَ يُحِبُّ التَّوَّابِينَ — Allah aime ceux qui se repentent",
+  "لَا تَقْنَطُوا مِنْ رَحْمَةِ اللهِ",
+  "إِنَّ اللهَ يُحِبُّ التَّوَّابِينَ",
+  "وَاللهُ يُحِبُّ الصَّابِرِينَ — Allah aime les patients",
+  "إِنَّ مَعَ الْعُسْرِ يُسْرًا — Après la difficulté vient la facilité",
 ];
 
-let dhikrIndex = 0;
-let tickInterval = null;
-let dhikrInterval = null;
+// ============ STATE ============
+let tickInterval, dhikrInterval, dhikrIdx = 0;
 
-function save(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
-function load(key) { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } }
+function save(k,v) { localStorage.setItem(k, JSON.stringify(v)); }
+function load(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } }
 
-function handleStart() {
-  const now = Date.now();
-  save('tawba_start', now);
-  save('tawba_last_milestone', 0);
-  showCounter(now, 0);
-}
-
-function showStart(afterRelapse = false) {
-  document.getElementById('startScreen').classList.remove('hidden');
-  document.getElementById('counterScreen').classList.add('hidden');
-  if (afterRelapse) {
-    document.getElementById('relapseMsg').classList.remove('hidden');
-    document.getElementById('startMsg').textContent = "Quand tu es prêt, démarre un nouveau compteur.";
+// ============ STARS ============
+function createStars() {
+  const container = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.cssText = `
+      left:${Math.random()*100}%;
+      top:${Math.random()*100}%;
+      --dur:${2+Math.random()*4}s;
+      --op:${0.3+Math.random()*0.7};
+      animation-delay:${Math.random()*4}s;
+    `;
+    container.appendChild(s);
   }
-  if (tickInterval) clearInterval(tickInterval);
 }
 
-function showCounter(startTs, lastMilestone) {
-  document.getElementById('startScreen').classList.add('hidden');
-  document.getElementById('counterScreen').classList.remove('hidden');
-  buildMilestones(0);
-  tick(startTs, lastMilestone);
-  if (tickInterval) clearInterval(tickInterval);
-  tickInterval = setInterval(() => tick(startTs, load('tawba_last_milestone') || 0), 30000);
+// ============ PARTICLES ============
+function spawnParticles(x, y) {
+  const colors = ['#c9a84c','#f0d080','#ffffff','#2ecc71'];
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const angle = (Math.PI * 2 * i) / 20;
+    const dist = 80 + Math.random() * 120;
+    p.style.cssText = `
+      left:${x}px; top:${y}px;
+      width:${4+Math.random()*6}px;
+      height:${4+Math.random()*6}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      --tx:${Math.cos(angle)*dist}px;
+      --ty:${Math.sin(angle)*dist}px;
+      --dur:${0.6+Math.random()*0.6}s;
+    `;
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 1200);
+  }
 }
 
-function tick(startTs, lastMilestone) {
+// ============ RENDER ============
+function getRank(days) {
+  return [...RANKS].reverse().find(r => days >= r.min) || RANKS[0];
+}
+
+function getNextMilestone(days) {
+  return REWARDS.find(r => r.days > days) || null;
+}
+
+function renderRewards(days) {
+  const grid = document.getElementById('rewardsGrid');
+  grid.innerHTML = '';
+  REWARDS.forEach(r => {
+    const done = days >= r.days;
+    const card = document.createElement('div');
+    card.className = `reward-card ${done ? 'unlocked' : 'locked'}`;
+    card.innerHTML = `
+      ${done ? `<span class="reward-check">✓</span>` : `<span class="reward-locked-icon">🔒</span>`}
+      <span class="reward-emoji">${r.emoji}</span>
+      <div class="reward-days">${r.days} JOURS</div>
+      <div class="reward-name">${done ? r.reward : r.name}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function renderXP(days) {
+  const next = getNextMilestone(days);
+  if (!next) {
+    document.getElementById('xpNext').textContent = '🏆 Tous paliers atteints !';
+    document.getElementById('xpLeft').textContent = '';
+    document.getElementById('xpFill').style.width = '100%';
+    return;
+  }
+  const prev = [...REWARDS].reverse().find(r => r.days <= days);
+  const prevDays = prev ? prev.days : 0;
+  const pct = ((days - prevDays) / (next.days - prevDays)) * 100;
+  document.getElementById('xpNext').textContent = `${next.emoji} ${next.name}`;
+  document.getElementById('xpLeft').textContent = `${next.days - days}j restants`;
+  document.getElementById('xpFill').style.width = Math.min(pct, 100) + '%';
+}
+
+function renderRank(days) {
+  const rank = getRank(days);
+  document.getElementById('rankIcon').textContent = rank.emoji;
+  document.getElementById('rankName').textContent = rank.name;
+  document.getElementById('rankLevel').textContent = rank.level;
+}
+
+function tick(startTs) {
   const now = Date.now();
   const diff = now - startTs;
   const totalMin = Math.floor(diff / 60000);
   const d = Math.floor(totalMin / 1440);
   const h = Math.floor((totalMin % 1440) / 60);
   const m = totalMin % 60;
-  const totalH = d * 24 + h;
 
-  document.getElementById('daysCount').textContent = d;
-  document.getElementById('hmCount').textContent = `${h}h ${m}min`;
-  document.getElementById('statHeures').textContent = totalH;
-  document.getElementById('statPrieres').textContent = (d * 24 + h) * 5;
-  document.getElementById('statJours').textContent = d;
+  document.getElementById('daysNum').textContent = d;
+  document.getElementById('timeDetail').textContent = `${h}h ${m}min`;
 
-  // Date info
   const startDate = new Date(startTs);
-  document.getElementById('dateInfo').textContent =
+  document.getElementById('startDateTxt').textContent =
     `Depuis le ${startDate.toLocaleDateString('fr-FR', {day:'numeric',month:'long',year:'numeric'})}`;
 
-  buildMilestones(d);
-  updateProgress(d);
+  renderRank(d);
+  renderRewards(d);
+  renderXP(d);
 
-  // Check milestone
-  const current = [...MILESTONES].reverse().find(ms => ms.days <= d);
-  if (current && current.days !== lastMilestone) {
-    save('tawba_last_milestone', current.days);
-    showCelebrate(current);
+  // Check for new milestone
+  const lastNotified = load('tawba_last_notif') || 0;
+  const current = [...REWARDS].reverse().find(r => r.days <= d);
+  if (current && current.days > lastNotified) {
+    save('tawba_last_notif', current.days);
+    setTimeout(() => showCelebrate(current), 500);
   }
 }
 
-function buildMilestones(days) {
-  const grid = document.getElementById('milestonesGrid');
-  grid.innerHTML = '';
-  MILESTONES.forEach(ms => {
-    const chip = document.createElement('div');
-    chip.className = `milestone-chip ${days >= ms.days ? 'done' : 'todo'}`;
-    chip.textContent = `${ms.icon} ${ms.label}`;
-    grid.appendChild(chip);
-  });
+// ============ CELEBRATE ============
+function showCelebrate(r) {
+  document.getElementById('celebEmoji').textContent = r.emoji;
+  document.getElementById('celebDays').textContent = `${r.days} JOURS ACCOMPLIS`;
+  document.getElementById('celebTitle').textContent = r.title + ' — ' + r.name;
+  document.getElementById('celebReward').textContent = r.reward;
+  document.getElementById('celebMsg').textContent = r.msg;
+  document.getElementById('celebModal').classList.remove('hidden');
+
+  // Particles from center
+  setTimeout(() => {
+    const box = document.querySelector('.celebrate-box');
+    const rect = box.getBoundingClientRect();
+    spawnParticles(rect.left + rect.width/2, rect.top + rect.height/3);
+  }, 300);
+
+  // Mark reward card
+  setTimeout(() => {
+    const cards = document.querySelectorAll('.reward-card.unlocked');
+    if (cards.length) cards[cards.length-1].classList.add('just-unlocked');
+  }, 100);
 }
 
-function updateProgress(days) {
-  const next = MILESTONES.find(ms => ms.days > days);
-  if (!next) {
-    document.getElementById('progressCard').style.display = 'none';
-    return;
-  }
-  document.getElementById('progressCard').style.display = '';
-  document.getElementById('progressLabel').textContent = `${next.icon} ${next.label}`;
-  document.getElementById('progressRemaining').textContent = `${next.days - days}j restants`;
-  const pct = Math.min((days / next.days) * 100, 100);
-  document.getElementById('progressFill').style.width = pct + '%';
-}
-
-function showCelebrate(ms) {
-  document.getElementById('celebIcon').textContent = ms.icon;
-  document.getElementById('celebTitle').textContent = `${ms.label} accomplis`;
-  document.getElementById('celebMsg').textContent = ms.msg;
-  document.getElementById('celebrateModal').classList.remove('hidden');
-}
 function hideCelebrate() {
-  document.getElementById('celebrateModal').classList.add('hidden');
+  document.getElementById('celebModal').classList.add('hidden');
 }
 
+// ============ SCREENS ============
+function showCounter(startTs) {
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('counterScreen').classList.remove('hidden');
+  tick(startTs);
+  if (tickInterval) clearInterval(tickInterval);
+  tickInterval = setInterval(() => tick(startTs), 30000);
+}
+
+function showStart(afterRelapse) {
+  document.getElementById('startScreen').classList.remove('hidden');
+  document.getElementById('counterScreen').classList.add('hidden');
+  if (afterRelapse) {
+    document.getElementById('relapseNote').classList.remove('hidden');
+    document.getElementById('startMsg').textContent = 'Quand tu es prêt, recommence.\nAllah ne ferme jamais la porte.';
+  }
+  if (tickInterval) clearInterval(tickInterval);
+}
+
+function handleStart() {
+  const now = Date.now();
+  save('tawba_start', now);
+  save('tawba_last_notif', 0);
+  showCounter(now);
+}
+
+// ============ CONFIRM ============
 function showConfirm() { document.getElementById('confirmModal').classList.remove('hidden'); }
 function hideConfirm() { document.getElementById('confirmModal').classList.add('hidden'); }
-
 function confirmRelapse() {
   hideConfirm();
   localStorage.removeItem('tawba_start');
-  localStorage.removeItem('tawba_last_milestone');
+  localStorage.removeItem('tawba_last_notif');
   if (tickInterval) clearInterval(tickInterval);
   showStart(true);
 }
 
+// ============ DHIKR ============
 function rotateDhikr() {
-  const el = document.getElementById('dhikr');
+  const el = document.getElementById('dhikrText');
   el.style.opacity = '0';
   setTimeout(() => {
-    dhikrIndex = (dhikrIndex + 1) % DHIKR.length;
-    el.textContent = DHIKR[dhikrIndex];
+    dhikrIdx = (dhikrIdx + 1) % DHIKR.length;
+    el.textContent = DHIKR[dhikrIdx];
     el.style.opacity = '1';
-  }, 400);
+  }, 500);
 }
 
-// Init
-window.addEventListener('load', () => {
-  const startTs = load('tawba_start');
-  const lastMilestone = load('tawba_last_milestone') || 0;
+// ============ INIT ============
+createStars();
+document.getElementById('dhikrText').textContent = DHIKR[0];
+dhikrInterval = setInterval(rotateDhikr, 5000);
 
-  document.getElementById('dhikr').textContent = DHIKR[0];
-  dhikrInterval = setInterval(rotateDhikr, 4000);
-
-  if (startTs) {
-    showCounter(startTs, lastMilestone);
-  } else {
-    showStart(false);
-  }
-});
+const startTs = load('tawba_start');
+const lastNotif = load('tawba_last_notif') || 0;
+if (startTs) {
+  showCounter(startTs);
+} else {
+  showStart(false);
+}
 </script>
 </body>
 </html>
